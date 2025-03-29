@@ -531,6 +531,73 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   }
 });
+
+
+const uploadButton = document.getElementById('uploadButton');
+
+uploadButton.addEventListener('click', () => {
+  const tempInput = document.createElement('input');
+  tempInput.type = 'file';
+  tempInput.accept = 'image/jpeg, image/png, image/jpg, image/jpeng';
+
+  tempInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+
+    if (file) {
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/jpeng'];
+      if (allowedTypes.includes(file.type)) {
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          const imageSrc = e.target.result;
+
+          // Display the uploaded image in the button's place
+
+          const imageElement = document.createElement('img');
+          imageElement.src = imageSrc;
+          imageElement.style.width = '100px';
+          imageElement.style.height = '100px';
+          imageElement.style.objectFit = 'cover'; // Ensure the image fills the 100x100 area
+
+          // Replace the button with the image
+          uploadButton.replaceWith(imageElement);
+
+          // Optional: Upload the image
+          // uploadImage(file);
+        };
+
+        reader.readAsDataURL(file);
+      } else {
+        alert('Please select a valid image file (JPG, PNG, JPEG, JPENG).');
+      }
+    }
+
+    tempInput.remove();
+  });
+
+  tempInput.click();
+});
+
+// Example upload function (replace with your server-side logic)
+async function uploadImage(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const response = await fetch('/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (response.ok) {
+      console.log('Image uploaded successfully!');
+    } else {
+      console.error('Image upload failed.');
+    }
+  } catch (error) {
+    console.error('Error uploading image:', error);
+  }
+}
   
   
   
